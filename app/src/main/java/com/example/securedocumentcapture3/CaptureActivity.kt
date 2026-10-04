@@ -24,7 +24,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.io.ByteArrayOutputStream
 
 
 class CaptureActivity : AppCompatActivity() {
@@ -47,7 +46,7 @@ class CaptureActivity : AppCompatActivity() {
     private lateinit var storedDocumentType: TextView
     private lateinit var storageMessage: TextView
 
-    // Captured/cropped image stays in memory
+    // Captured image stays in memory
     // until user presses "Use Photo".
     private var capturedImageBytes: ByteArray? = null
 
@@ -418,74 +417,21 @@ class CaptureActivity : AppCompatActivity() {
                             brightnessAcceptable
                         ) {
 
-                            // =================================
-                            // AUTO DETECT + CROP DOCUMENT
-                            // =================================
+                            // Keep original captured image.
+                            // Document edge detection and
+                            // auto-cropping will be added later.
 
-                            val croppedDocument =
-                                DocumentScanner
-                                    .scanDocument(bitmap)
+                            capturedImageBytes =
+                                bytes
 
-
-                            if (croppedDocument != null) {
-
-                                val outputStream =
-                                    ByteArrayOutputStream()
+                            bitmap.recycle()
 
 
-                                croppedDocument.compress(
-                                    android.graphics.Bitmap
-                                        .CompressFormat.JPEG,
-                                    95,
-                                    outputStream
+                            runOnUiThread {
+
+                                showPhotoReview(
+                                    bytes
                                 )
-
-
-                                val croppedBytes =
-                                    outputStream.toByteArray()
-
-
-                                outputStream.close()
-
-
-                                // Store cropped image temporarily
-                                capturedImageBytes =
-                                    croppedBytes
-
-
-                                bitmap.recycle()
-
-                                croppedDocument.recycle()
-
-
-                                runOnUiThread {
-
-                                    showPhotoReview(
-                                        croppedBytes
-                                    )
-                                }
-
-
-                            } else {
-
-                                // =================================
-                                // DOCUMENT EDGES NOT FOUND
-                                // =================================
-
-                                bitmap.recycle()
-
-                                capturedImageBytes =
-                                    null
-
-
-                                runOnUiThread {
-
-                                    Toast.makeText(
-                                        this@CaptureActivity,
-                                        "Document edges could not be detected. Place the full document inside the frame and try again.",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
                             }
 
 

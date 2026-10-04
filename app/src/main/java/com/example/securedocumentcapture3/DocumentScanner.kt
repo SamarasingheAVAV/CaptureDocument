@@ -1,4 +1,4 @@
-package com.example.securedocumentcapture3
+/*package com.example.securedocumentcapture3
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -735,4 +735,4 @@ object DocumentScanner {
                     y * y
         )
     }
-}
+}*/
